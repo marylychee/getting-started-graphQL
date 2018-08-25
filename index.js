@@ -2,27 +2,39 @@
 
 const { graphql, buildSchema } = require('graphql');
 
+// query feild type of foo which is a type of string
 const schema = buildSchema(`
-type Query {
-  foo: String
+type Video {
+  id: ID,
+  title: String,
+  duration: Int,
+  watched: Boolean
 }
 
-type Schema {
-  query: Query
+type Query {
+  video: Video
 }
 `);
 
 const resolvers = {
-  foo: () => 'bar',
+  video: () => ({
+    id: () => 1,
+    title: () => 'bar',
+    duration: () => 180,
+    watched: () => true,
+  })
 }
 
 const query = `
 query myFirstQuery {
-  foo
+  video {
+    id,
+    title,
+    duration,
+    watched
+  }
 }
 `
 graphql(schema, query, resolvers)
-.then((result) => {
-  console.log(result);
-})
-.catch((error) => console.log(error));
+  .then((result) => console.log(result))
+  .catch((error) => console.log(error));
