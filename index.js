@@ -1,6 +1,11 @@
 'use strict';
 
+const express = require('express');
+const graphqlHTTP = require('express-graphql');
 const { graphql, buildSchema } = require('graphql');
+
+const PORT = process.env.PORT || 3000;
+const server = express();
 
 // query feild type of foo which is a type of string
 const schema = buildSchema(`
@@ -24,7 +29,7 @@ const videoA = {
   watched: true,
 }
 
-const videoB + {
+const videoB = {
   id: 'b',
   title: 'Ember.js CLI',
   duration: 240,
@@ -43,16 +48,13 @@ const resolvers = {
   videos: () => videos,
 };
 
-const query = `
-query myFirstQuery {
-  videos {
-    id,
-    title,
-    duration,
-    watched
-  }
-}
-`
-graphql(schema, query, resolvers)
-  .then((result) => console.log(result))
-  .catch((error) => console.log(error));
+server.use('/graphql', graphqlHTTP({
+  // config object
+  schema,
+  graphiql: true,
+  rootValue: resolvers
+}));
+
+server.listen(PORT, () => {
+  console.log(`Listening on http://localhost:${PORT}`);
+});
